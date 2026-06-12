@@ -93,7 +93,7 @@ body{font-family:"Segoe UI",Aptos,Calibri,-apple-system,BlinkMacSystemFont,sans-
 .stat{display:flex;flex-direction:column;gap:1px}
 .stat-val{font-size:1.15rem;font-weight:700;color:var(--cp-accent)}
 .stat-lbl{font-size:10px;color:var(--cp-text-muted);text-transform:uppercase;letter-spacing:.05em}
-.reset-all-btn{margin-left:auto;padding:6px 14px;border-radius:8px;border:1px solid var(--cp-border);background:var(--cp-surface-soft);color:var(--cp-text);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
+.reset-all-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--cp-border);background:var(--cp-surface-soft);color:var(--cp-text);font-size:12px;cursor:pointer;font-family:inherit;transition:all .12s}
 .reset-all-btn:hover{border-color:var(--cp-accent);color:var(--cp-accent)}
 .table-wrap{background:var(--cp-surface);border:1px solid var(--cp-border);border-radius:10px;overflow:hidden}
 .table-container{overflow-x:auto}
@@ -128,6 +128,11 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 
 .bracket-btn{background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;color:var(--cp-text-muted);font-size:13px;line-height:1;transition:all .12s;vertical-align:middle}
 .bracket-btn:hover{background:var(--cp-accent-soft);color:var(--cp-accent)}
+
+.back-btn{display:none;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--cp-accent);background:var(--cp-accent-soft);color:var(--cp-accent);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .12s}
+.back-btn:hover{background:var(--cp-accent);color:var(--cp-accent-fg)}
+.back-btn.visible{display:inline-flex}
+.name-link{color:inherit;text-decoration:none;cursor:pointer;border-bottom:1px dashed var(--cp-border-strong)}.name-link:hover{color:var(--cp-accent);border-bottom-color:var(--cp-accent)}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
 @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{min-height:auto;border-right:none;border-bottom:1px solid var(--cp-border)}}
 </style>
@@ -213,7 +218,7 @@ mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;pad
       <div class="stat"><span class="stat-val" id="statChamps">—</span><span class="stat-lbl">Champions</span></div>
       <div class="stat"><span class="stat-val" id="statSchools">—</span><span class="stat-lbl">Schools</span></div>
       <div class="stat"><span class="stat-val" id="statYears">—</span><span class="stat-lbl">Years</span></div>
-      <button class="reset-all-btn" id="resetAll">Reset All Filters</button>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center"><button class="back-btn" id="backBtn"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2L4 6l4 4"/></svg> Back</button><button class="reset-all-btn" id="resetAll">Reset All Filters</button></div>
     </div>
     <div class="table-wrap">
       <div class="table-container">
@@ -326,13 +331,20 @@ function render(){
   }else{
     tbody.innerHTML=pageData.map(r=>`
       <tr>
-        <td><button class="bracket-btn" title="Filter to this bracket" onclick="filterToBracket(${JSON.stringify(r.Year)},${JSON.stringify(r.Class)},${JSON.stringify(r.Weight)})">⊞</button></td>
+        <td><button class="bracket-btn" title="Filter to this bracket" data-year="${r.Year}" data-class="${r.Class}" data-weight="${r.Weight}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="2" y1="3" x2="2" y2="6"/>
+  <line x1="2" y1="4.5" x2="6" y2="4.5"/>
+  <line x1="2" y1="8" x2="2" y2="11"/>
+  <line x1="2" y1="9.5" x2="6" y2="9.5"/>
+  <line x1="6" y1="4.5" x2="6" y2="9.5"/>
+  <line x1="6" y1="7" x2="10" y2="7"/>
+</svg></button></td>
         <td>${placeBadge(r.Place)}</td>
-        <td style="font-weight:600">${hl(r.Wrestler,q)}</td>
+        <td style="font-weight:600"><span class="name-link" data-wrestler="${r.Wrestler}">${hl(r.Wrestler,q)}</span></td>
         <td>${r.Year}</td>
         <td>${r.Class}</td>
         <td>${r.Weight}</td>
-        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis">${hl(r.School,q)}</td>
+        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis"><span class="name-link" data-school="${r.School}">${hl(r.School,q)}</span></td>
         <td>${hl(r.Town,q)}</td>
         <td>${r.Grad?`<span class="grad-badge">${r.Grad}`:''}</td>
         <td>${r.SchoolType?`<span class="type-badge type-${r.SchoolType.toLowerCase()}">${r.SchoolType}</span>`:''}</td>
@@ -372,7 +384,14 @@ document.querySelectorAll('.pill').forEach(p=>{
 document.querySelectorAll('.clear-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{const g=btn.dataset.clear;state[g].clear();document.querySelectorAll(`.pill[data-group="${g}"]`).forEach(p=>p.classList.remove('active'));resetPage();render();});
 });
+document.getElementById('backBtn').addEventListener('click', () => {
+  if (filterHistory.length > 0) {
+    restoreState(filterHistory.pop());
+  }
+});
 document.getElementById('resetAll').addEventListener('click',()=>{
+  filterHistory.length = 0;
+  updateBackBtn();
   state.search='';state.yearMin=1937;state.yearMax=2025;
   ['class','place','schooltype','grad'].forEach(g=>state[g].clear());
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
@@ -385,7 +404,129 @@ document.getElementById('resetAll').addEventListener('click',()=>{
 });
 
 
+
+const filterHistory = [];
+
+function snapshotState() {
+  return {
+    search: state.search,
+    yearMin: state.yearMin,
+    yearMax: state.yearMax,
+    class: [...state.class],
+    weight: [...state.weight],
+    place: [...state.place],
+    schooltype: [...state.schooltype],
+    grad: [...state.grad],
+    sortCol: state.sortCol,
+    sortDir: state.sortDir,
+    page: state.page,
+    perPage: state.perPage,
+  };
+}
+
+function restoreState(snap) {
+  state.search = snap.search;
+  state.yearMin = snap.yearMin;
+  state.yearMax = snap.yearMax;
+  state.class = new Set(snap.class);
+  state.weight = new Set(snap.weight);
+  state.place = new Set(snap.place);
+  state.schooltype = new Set(snap.schooltype);
+  state.grad = new Set(snap.grad);
+  state.sortCol = snap.sortCol;
+  state.sortDir = snap.sortDir;
+  state.page = snap.page;
+  state.perPage = snap.perPage;
+
+  // Sync search box
+  document.getElementById('searchInput').value = state.search;
+
+  // Sync year inputs
+  document.getElementById('yearMin').value = state.yearMin;
+  document.getElementById('yearMax').value = state.yearMax;
+
+  // Sync pills
+  document.querySelectorAll('.pill').forEach(p => {
+    const g = p.dataset.group;
+    p.classList.toggle('active', state[g] && state[g].has(p.dataset.val));
+  });
+
+  // Sync weight checkboxes — excluded weights are in state.weight
+  document.getElementById('weightList').querySelectorAll('input[type=checkbox]').forEach(cb => {
+    const w = isNaN(cb.dataset.weight) ? cb.dataset.weight : Number(cb.dataset.weight);
+    cb.checked = !state.weight.has(w);
+  });
+
+  updateBackBtn();
+  render();
+}
+
+function updateBackBtn() {
+  const btn = document.getElementById('backBtn');
+  btn.classList.toggle('visible', filterHistory.length > 0);
+}
+
+function filterToSchool(school) {
+  filterHistory.push(snapshotState());
+  updateBackBtn();
+
+  state.yearMin = 1937;
+  state.yearMax = 2025;
+  document.getElementById('yearMin').value = 1937;
+  document.getElementById('yearMax').value = 2025;
+
+  state.class.clear();
+  state.place.clear();
+  state.schooltype.clear();
+  state.grad.clear();
+  state.weight.clear();
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('weightList').querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true);
+
+  state.search = school;
+  document.getElementById('searchInput').value = school;
+
+  resetPage();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function filterToWrestler(name) {
+  filterHistory.push(snapshotState());
+  updateBackBtn();
+
+  // Reset all filters except search
+  state.yearMin = 1937;
+  state.yearMax = 2025;
+  document.getElementById('yearMin').value = 1937;
+  document.getElementById('yearMax').value = 2025;
+
+  state.class.clear();
+  state.place.clear();
+  state.schooltype.clear();
+  state.grad.clear();
+  state.weight.clear();
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('weightList').querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = true);
+
+  // Set search to wrestler name
+  state.search = name;
+  document.getElementById('searchInput').value = name;
+
+  resetPage();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
 function filterToBracket(year, cls, weight) {
+  // Save current state to history
+  filterHistory.push(snapshotState());
+  updateBackBtn();
+
+  // Clear search
+  state.search = '';
+  document.getElementById('searchInput').value = '';
+
   // Year: exact year
   state.yearMin = year;
   state.yearMax = year;
@@ -402,13 +543,29 @@ function filterToBracket(year, cls, weight) {
   // Weight: uncheck all except this one
   state.weight = new Set(ALL_WEIGHTS.filter(w => String(w) !== String(weight)));
   document.getElementById('weightList').querySelectorAll('input[type=checkbox]').forEach(cb => {
-    cb.checked = String(cb.dataset.weight) === String(weight);
+    const match = String(cb.dataset.weight) === String(weight);
+    cb.checked = match;
   });
 
   resetPage();
   render();
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+// Bracket button delegation - set up once at init
+document.getElementById('tableBody').addEventListener('click', e => {
+  const btn = e.target.closest('.bracket-btn');
+  if (btn) {
+    const w = btn.dataset.weight;
+    filterToBracket(Number(btn.dataset.year), btn.dataset.class, isNaN(w) ? w : Number(w));
+    return;
+  }
+  const name = e.target.closest('.name-link');
+  if (name) {
+    if (name.dataset.wrestler) filterToWrestler(name.dataset.wrestler);
+    else if (name.dataset.school) filterToSchool(name.dataset.school);
+  }
+});
 
 buildWeightList();
 render();
