@@ -125,6 +125,9 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 .page-btn.active{background:var(--cp-accent);border-color:var(--cp-accent);color:var(--cp-accent-fg)}
 .per-page-select{padding:5px 8px;border-radius:6px;border:1px solid var(--cp-border);background:var(--cp-bg-elevated);color:var(--cp-text);font-size:12px;font-family:inherit;cursor:pointer}
 .empty{padding:48px;text-align:center;color:var(--cp-text-muted);font-size:14px}
+
+.bracket-btn{background:none;border:none;cursor:pointer;padding:2px 4px;border-radius:4px;color:var(--cp-text-muted);font-size:13px;line-height:1;transition:all .12s;vertical-align:middle}
+.bracket-btn:hover{background:var(--cp-accent-soft);color:var(--cp-accent)}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
 @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{min-height:auto;border-right:none;border-bottom:1px solid var(--cp-border)}}
 </style>
@@ -270,6 +273,7 @@ function hl(text,q){
 }
 
 const COLS=[
+  {key:'_bracket',label:'',w:'32px'},
   {key:'Place',label:'Place',w:'60px'},
   {key:'Wrestler',label:'Wrestler',w:'160px'},
   {key:'Year',label:'Year',w:'60px'},
@@ -286,6 +290,7 @@ function buildHead(){
   const tr=document.getElementById('tableHead');
   tr.innerHTML=COLS.map(c=>`<th data-col="${c.key}" style="min-width:${c.w}" class="${state.sortCol===c.key?'sorted':''}">${c.label}<span class="sort-icon">${state.sortCol===c.key?(state.sortDir===1?'▲':'▼'):'⇅'}</span></th>`).join('');
   tr.querySelectorAll('th').forEach(th=>{
+    if(th.dataset.col==='_bracket'){th.style.cursor='default';return;}
     th.addEventListener('click',()=>{const col=th.dataset.col;if(state.sortCol===col)state.sortDir*=-1;else{state.sortCol=col;state.sortDir=1;}resetPage();render();});
   });
 }
@@ -321,6 +326,7 @@ function render(){
   }else{
     tbody.innerHTML=pageData.map(r=>`
       <tr>
+        <td><button class="bracket-btn" title="Filter to this bracket" onclick="filterToBracket(${JSON.stringify(r.Year)},${JSON.stringify(r.Class)},${JSON.stringify(r.Weight)})">⊞</button></td>
         <td>${placeBadge(r.Place)}</td>
         <td style="font-weight:600">${hl(r.Wrestler,q)}</td>
         <td>${r.Year}</td>
@@ -377,6 +383,32 @@ document.getElementById('resetAll').addEventListener('click',()=>{
   state.weight.clear();state.sortCol='Year';state.sortDir=-1;
   resetPage();render();
 });
+
+
+function filterToBracket(year, cls, weight) {
+  // Year: exact year
+  state.yearMin = year;
+  state.yearMax = year;
+  document.getElementById('yearMin').value = year;
+  document.getElementById('yearMax').value = year;
+
+  // Class: select only this class
+  state.class.clear();
+  state.class.add(cls);
+  document.querySelectorAll('.pill[data-group="class"]').forEach(p => {
+    p.classList.toggle('active', p.dataset.val === cls);
+  });
+
+  // Weight: uncheck all except this one
+  state.weight = new Set(ALL_WEIGHTS.filter(w => String(w) !== String(weight)));
+  document.getElementById('weightList').querySelectorAll('input[type=checkbox]').forEach(cb => {
+    cb.checked = String(cb.dataset.weight) === String(weight);
+  });
+
+  resetPage();
+  render();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
 
 buildWeightList();
 render();
