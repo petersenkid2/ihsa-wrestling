@@ -391,7 +391,7 @@ function resetPage(){state.page=1;}
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input',e=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{state.search=e.target.value;resetPage();render();},200);});
 document.getElementById('yearMin').addEventListener('change',e=>{state.yearMin=Math.max(1937,Math.min(Number(e.target.value)||1937,state.yearMax));e.target.value=state.yearMin;resetPage();render();});
-document.getElementById('yearMax').addEventListener('change',e=>{state.yearMax=Math.min(2026,Math.max(Number(e.target.value)||2025,state.yearMin));e.target.value=state.yearMax;resetPage();render();});
+document.getElementById('yearMax').addEventListener('change',e=>{state.yearMax=Math.min(2026,Math.max(Number(e.target.value)||2026,state.yearMin));e.target.value=state.yearMax;resetPage();render();});
 document.querySelectorAll('.pill').forEach(p=>{
   p.addEventListener('click',()=>{const g=p.dataset.group,v=p.dataset.val;if(state[g].has(v))state[g].delete(v);else state[g].add(v);p.classList.toggle('active',state[g].has(v));resetPage();render();});
 });
@@ -406,12 +406,12 @@ document.getElementById('backBtn').addEventListener('click', () => {
 document.getElementById('resetAll').addEventListener('click',()=>{
   filterHistory.length = 0;
   updateBackBtn();
-  state.search='';state.yearMin=1937;state.yearMax=2025;
+  state.search='';state.yearMin=1937;state.yearMax=2026;
   ['class','place','schooltype','grad'].forEach(g=>state[g].clear());
   document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   document.getElementById('searchInput').value='';
   document.getElementById('yearMin').value=1937;
-  document.getElementById('yearMax').value=2025;
+  document.getElementById('yearMax').value=2026;
   document.getElementById('weightList').querySelectorAll('input').forEach(cb=>cb.checked=true);
   state.weight.clear();state.sortCol='Year';state.sortDir=-1;
   resetPage();render();
@@ -487,7 +487,7 @@ function filterToSchool(school) {
   state.yearMin = 1937;
   state.yearMax = 2026;
   document.getElementById('yearMin').value = 1937;
-  document.getElementById('yearMax').value = 2025;
+  document.getElementById('yearMax').value = 2026;
 
   state.class.clear();
   state.place.clear();
@@ -513,7 +513,7 @@ function filterToWrestler(name) {
   state.yearMin = 1937;
   state.yearMax = 2026;
   document.getElementById('yearMin').value = 1937;
-  document.getElementById('yearMax').value = 2025;
+  document.getElementById('yearMax').value = 2026;
 
   state.class.clear();
   state.place.clear();
