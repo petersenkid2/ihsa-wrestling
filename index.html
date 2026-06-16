@@ -139,6 +139,7 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 .data-banner-icon{font-size:15px;flex-shrink:0}
 .data-banner a{color:var(--cp-link);text-decoration:underline}
 .site-footer{padding:10px 16px;border-top:1px solid var(--cp-border);font-size:12px;color:var(--cp-text-muted);display:flex;justify-content:space-between;align-items:center;background:var(--cp-surface)}
+.footer-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .feedback-link{color:var(--cp-link);text-decoration:none;font-size:12px}
 .feedback-link:hover{text-decoration:underline}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
@@ -585,8 +586,22 @@ buildWeightList();
 render();
 </script>
 <div class="site-footer">
-  <span>IHSA Wrestling Results 1937–2026</span><span style="color:var(--cp-border-strong);margin:0 8px">|</span><span>v2.3</span>
+  <div class="footer-meta"><span>IHSA Wrestling Results 1937–2026</span><span style="color:var(--cp-border-strong)">|</span><span>v2.3</span><span style="color:var(--cp-border-strong)">|</span><span id="visitorCounter">Visitors: —</span></div>
   <a class="feedback-link" href="mailto:matt_petersen@hotmail.com?subject=IHSA%20Wrestling%20Feedback&body=Wrestler%3A%0AYear%3A%0AClass%3A%0AWeight%3A%0AIssue%3A">Feedback</a>
 </div>
+<script>
+fetch('https://api.countapi.xyz/hit/ihsa-wrestling-results/homepage-visits')
+  .then(r => r.json())
+  .then(data => {
+    const el = document.getElementById('visitorCounter');
+    if (el && typeof data.value !== 'undefined') {
+      el.textContent = `Visitors: ${Number(data.value).toLocaleString()}`;
+    }
+  })
+  .catch(() => {
+    const el = document.getElementById('visitorCounter');
+    if (el) el.textContent = 'Visitors: unavailable';
+  });
+</script>
 </body>
 </html>
