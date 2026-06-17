@@ -118,9 +118,19 @@
       padding: 8px;
       margin-bottom: 6px;
       display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .result-row-header {
+      display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 12px;
+    }
+    .result-row-school {
+      color: #666;
+      font-size: 11px;
+      padding-left: 36px;
     }
     .place-badge {
       display: flex;
@@ -393,13 +403,12 @@ function displayAllResults(wrestlerName, allResults) {
     else if (wrestler.Place === 3) badgeClass = 'third';
     
     html += '<div class="result-row">' +
-      '<div class="place-badge ' + badgeClass + '">' + wrestler.Place + '</div>' +
-      '<div class="wrestler-name">' + wrestler.Wrestler + '</div>' +
-      '<div class="year">' + wrestler.Year + '</div>' +
-      '<div class="class">' + wrestler.Class + '</div>' +
-      '<div class="weight">' + wrestler.Weight + '</div>' +
-      '<div class="school">' + wrestler.School + '</div>' +
-      '<button class="expand-btn" onclick="toggleBracket(\'' + bracketId + '\')">Bracket</button>' +
+      '<div class="result-row-header">' +
+        '<div class="place-badge ' + badgeClass + '">' + wrestler.Place + '</div>' +
+        '<div class="wrestler-name">' + wrestler.Wrestler + '</div>' +
+        '<button class="expand-btn" onclick="toggleBracket(\'' + bracketId + '\')">Bracket</button>' +
+      '</div>' +
+      '<div class="result-row-school">' + wrestler.School + '</div>' +
       '</div>' +
       '<div class="bracket-section" id="' + bracketId + '">' +
       '<div class="bracket-header">' + wrestler.Weight + ' lbs - ' + wrestler.Class + ' - ' + wrestler.Year + '</div>';
@@ -414,9 +423,6 @@ function displayAllResults(wrestlerName, allResults) {
       html += '<div class="bracket-card ' + (isHighlighted ? 'highlighted' : '') + '">' +
         '<div class="bracket-place-badge ' + badgeClass + '">' + w.Place + '</div>' +
         '<div class="bracket-name" onclick="selectWrestler(\'' + w.Wrestler.replace(/'/g, "\\'") + '\')">' + w.Wrestler + '</div>' +
-        '<div class="year">' + w.Year + '</div>' +
-        '<div class="class">' + w.Class + '</div>' +
-        '<div class="weight">' + w.Weight + '</div>' +
         '<div class="school">' + w.School + '</div>' +
         '</div>';
     });
@@ -462,3 +468,5 @@ document.addEventListener('click', (e) => {
 
 </body>
 </html>
+
+
