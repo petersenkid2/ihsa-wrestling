@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <title>IHSA Wrestling Results - Mobile</title>
   <style>
     * {
@@ -20,7 +20,8 @@
       color: #333;
       line-height: 1.5;
       font-size: 16px;
-      margin: 0;
+      max-width: 430px;
+      margin: 0 auto;
       -webkit-text-size-adjust: 100%;
     }
     .header {
@@ -71,8 +72,11 @@
       padding: 14px 16px;
       border: 1px solid #ddd;
       border-radius: 8px;
-      font-size: 20px;
+      font-size: 20px !important;
+      line-height: 1.2;
       font-family: inherit;
+      -webkit-appearance: none;
+      appearance: none;
     }
     #searchInput::placeholder {
       font-size: 20px;
@@ -359,7 +363,7 @@ searchInput.addEventListener('input', (e) => {
   }
   
   const uniqueWrestlers = [...new Set(DATA.map(d => d.Wrestler))];
-  const matches = uniqueWrestlers.filter(w => w.toLowerCase().includes(query)).slice(0, 8);
+  const matches = uniqueWrestlers.filter(w => w.toLowerCase().includes(query)).slice(0, 50);
   
   if (matches.length === 0) {
     autocompleteList.classList.remove('active');
@@ -474,7 +478,7 @@ document.addEventListener('click', (e) => {
 </script>
 
   <div style="text-align:center; padding: 24px 16px 32px; color: #999; font-size: 13px;">
-    v1.3 &nbsp;&middot;&nbsp;
+    v1.4 &nbsp;&middot;&nbsp;
     <a href="mailto:matt_petersen@hotmail.com?subject=IHSA Wrestling Results Feedback" style="color:#0078d4; text-decoration:none;">Send Feedback</a>
   </div>
 
