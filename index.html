@@ -62,6 +62,8 @@ body{font-family:"Segoe UI",Aptos,Calibri,-apple-system,BlinkMacSystemFont,sans-
 .header-title{display:flex;align-items:baseline;gap:10px}
 .header-title h1{font-size:1.2rem;font-weight:700}
 .header-title .subtitle{font-size:.8rem;color:var(--cp-text-muted)}
+.mobile-link{display:inline-flex;align-items:center;padding:6px 12px;border-radius:8px;border:1px solid var(--cp-border);background:var(--cp-surface-soft);color:var(--cp-link);text-decoration:none;font-size:12px;font-weight:600;transition:all .12s}
+.mobile-link:hover{border-color:var(--cp-accent);color:var(--cp-accent)}
 .search-wrap{position:relative;flex:0 1 300px}
 .search-wrap input{width:100%;padding:7px 12px 7px 36px;border:1px solid var(--cp-border);border-radius:.625rem;background:var(--cp-bg-elevated);color:var(--cp-text);font-size:14px;outline:none;transition:border-color .15s;font-family:inherit}
 .search-wrap input:focus{border-color:var(--cp-accent)}
@@ -139,7 +141,6 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 .data-banner-icon{font-size:15px;flex-shrink:0}
 .data-banner a{color:var(--cp-link);text-decoration:underline}
 .site-footer{padding:10px 16px;border-top:1px solid var(--cp-border);font-size:12px;color:var(--cp-text-muted);display:flex;justify-content:space-between;align-items:center;background:var(--cp-surface)}
-.footer-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .feedback-link{color:var(--cp-link);text-decoration:none;font-size:12px}
 .feedback-link:hover{text-decoration:underline}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
@@ -159,6 +160,7 @@ mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;pad
     <h1>IHSA Wrestling Results</h1>
     <span class="subtitle">1937–2026 · Illinois High School Association</span>
   </div>
+  <a class="mobile-link" href="https://mobile.wrestlingroad.com">Mobile</a>
   <div class="search-wrap">
     <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
     <input type="text" id="searchInput" placeholder="Search wrestler, school, town…" autocomplete="off" spellcheck="false">
@@ -586,22 +588,8 @@ buildWeightList();
 render();
 </script>
 <div class="site-footer">
-  <div class="footer-meta"><span>IHSA Wrestling Results 1937–2026</span><span style="color:var(--cp-border-strong)">|</span><span>v2.3</span><span style="color:var(--cp-border-strong)">|</span><span id="visitorCounter">Visitors: —</span></div>
+  <span>IHSA Wrestling Results 1937–2026</span><span style="margin-left:8px">v2.4</span>
   <a class="feedback-link" href="mailto:matt_petersen@hotmail.com?subject=IHSA%20Wrestling%20Feedback&body=Wrestler%3A%0AYear%3A%0AClass%3A%0AWeight%3A%0AIssue%3A">Feedback</a>
 </div>
-<script>
-fetch('https://api.countapi.xyz/hit/ihsa-wrestling-results/homepage-visits')
-  .then(r => r.json())
-  .then(data => {
-    const el = document.getElementById('visitorCounter');
-    if (el && typeof data.value !== 'undefined') {
-      el.textContent = `Visitors: ${Number(data.value).toLocaleString()}`;
-    }
-  })
-  .catch(() => {
-    const el = document.getElementById('visitorCounter');
-    if (el) el.textContent = 'Visitors: unavailable';
-  });
-</script>
 </body>
 </html>
