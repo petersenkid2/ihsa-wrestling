@@ -118,19 +118,9 @@
       padding: 8px;
       margin-bottom: 6px;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 12px;
-    }
-    .result-row-header {
-      display: flex;
       align-items: center;
       gap: 8px;
-    }
-    .result-row-school {
-      color: #666;
-      font-size: 11px;
-      padding-left: 36px;
+      font-size: 12px;
     }
     .place-badge {
       display: flex;
@@ -161,35 +151,18 @@
     .wrestler-name {
       font-weight: 600;
       color: #333;
-      min-width: 100px;
-      flex-shrink: 0;
     }
     .year {
-      width: 42px;
-      flex-shrink: 0;
       font-size: 11px;
       text-align: left;
     }
     .class {
-      width: 28px;
-      flex-shrink: 0;
       font-size: 11px;
       text-align: left;
     }
     .weight {
-      width: 35px;
-      flex-shrink: 0;
       font-size: 11px;
       text-align: left;
-    }
-    .school {
-      color: #333;
-      flex: 1;
-      font-size: 11px;
-      text-align: left;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
     .expand-btn {
       background: none;
@@ -202,10 +175,19 @@
       font-weight: 500;
       transition: all 0.12s;
       white-space: nowrap;
-      flex-shrink: 0;
+      margin-left: auto;
     }
     .expand-btn:active {
       background: #f0f0f0;
+    }
+    .school {
+      color: #333;
+      flex: 1;
+      font-size: 11px;
+      text-align: left;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .bracket-section {
       margin-top: 0;
@@ -281,6 +263,13 @@
     .bracket-card.highlighted .bracket-name {
       color: #333;
       text-decoration: none;
+    }
+    .bracket-school {
+      font-size: 11px;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .back-btn {
       display: inline-block;
@@ -403,12 +392,13 @@ function displayAllResults(wrestlerName, allResults) {
     else if (wrestler.Place === 3) badgeClass = 'third';
     
     html += '<div class="result-row">' +
-      '<div class="result-row-header">' +
-        '<div class="place-badge ' + badgeClass + '">' + wrestler.Place + '</div>' +
-        '<div class="wrestler-name">' + wrestler.Wrestler + '</div>' +
-        '<button class="expand-btn" onclick="toggleBracket(\'' + bracketId + '\')">Bracket</button>' +
-      '</div>' +
-      '<div class="result-row-school">' + wrestler.School + '</div>' +
+      '<div class="place-badge ' + badgeClass + '">' + wrestler.Place + '</div>' +
+      '<div class="wrestler-name">' + wrestler.Wrestler + '</div>' +
+      '<div class="year">' + wrestler.Year + '</div>' +
+      '<div class="class">' + wrestler.Class + '</div>' +
+      '<div class="weight">' + wrestler.Weight + '</div>' +
+      '<div class="school">' + wrestler.School + '</div>' +
+      '<button class="expand-btn" onclick="toggleBracket(\'' + bracketId + '\')">Bracket</button>' +
       '</div>' +
       '<div class="bracket-section" id="' + bracketId + '">' +
       '<div class="bracket-header">' + wrestler.Weight + ' lbs - ' + wrestler.Class + ' - ' + wrestler.Year + '</div>';
@@ -423,11 +413,11 @@ function displayAllResults(wrestlerName, allResults) {
       html += '<div class="bracket-card ' + (isHighlighted ? 'highlighted' : '') + '">' +
         '<div class="bracket-place-badge ' + badgeClass + '">' + w.Place + '</div>' +
         '<div class="bracket-name" onclick="selectWrestler(\'' + w.Wrestler.replace(/'/g, "\\'") + '\')">' + w.Wrestler + '</div>' +
-        '<div class="school">' + w.School + '</div>' +
+        '<div class="bracket-school">' + w.School + '</div>' +
         '</div>';
     });
     
-    html += '</div>';
+    html += '</div></div>';
   });
   
   resultContent.innerHTML = html;
@@ -468,5 +458,3 @@ document.addEventListener('click', (e) => {
 
 </body>
 </html>
-
-
