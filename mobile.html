@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>IHSA Wrestling Results - Mobile</title>
   <style>
     * {
@@ -15,6 +15,7 @@
       background: #f5f5f5;
       color: #333;
       line-height: 1.5;
+      font-size: 16px;
       max-width: 600px;
       margin: 0 auto;
     }
@@ -410,7 +411,7 @@ function displayAllResults(wrestlerName, allResults) {
       '<button class="expand-btn" onclick="toggleBracket(\'' + bracketId + '\')">Bracket</button>' +
       '</div>' +
       '<div class="bracket-section" id="' + bracketId + '">' +
-      '<div class="bracket-header">' + wrestler.Weight + ' lbs - ' + wrestler.Class + ' - ' + wrestler.Year + '</div>';
+      '<div class="bracket-header">' + wrestler.Year + ' - ' + wrestler.Class + ' - ' + wrestler.Weight + ' lbs</div>';
     
     bracketMatches.forEach(w => {
       const isHighlighted = w.Wrestler === wrestlerName;
@@ -464,6 +465,11 @@ document.addEventListener('click', (e) => {
   }
 });
 </script>
+
+  <div style="text-align:center; padding: 24px 16px 32px; color: #999; font-size: 13px;">
+    v1.0 &nbsp;&middot;&nbsp;
+    <a href="mailto:matt_petersen@hotmail.com?subject=IHSA Wrestling Results Feedback" style="color:#0078d4; text-decoration:none;">Send Feedback</a>
+  </div>
 
 </body>
 </html>
