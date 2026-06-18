@@ -282,8 +282,76 @@
       color: #005a9e;
     }
     .bracket-card.highlighted .bracket-name {
+      color: #0078d4;
+      text-decoration: underline;
+    }
+    .detail-card {
+      display: none;
+      background: #fff;
+      border: 1px solid #d7e8f8;
+      border-radius: 6px;
+      margin: 4px 0 8px 28px;
+      padding: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .detail-card.expanded {
+      display: block;
+    }
+    .detail-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      font-weight: 600;
       color: #333;
-      text-decoration: none;
+    }
+    .detail-close {
+      border: 1px solid #ddd;
+      background: #f7f7f7;
+      color: #333;
+      border-radius: 4px;
+      padding: 3px 7px;
+      font: inherit;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .info-btn {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #c8dff2;
+      background: #eef7ff;
+      color: #0078d4;
+      border-radius: 50%;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .info-btn:active {
+      background: #dceffd;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 10px;
+      font-size: 11px;
+    }
+    .detail-grid span {
+      display: block;
+      color: #777;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .detail-grid strong {
+      display: block;
+      color: #333;
+      font-weight: 600;
+      overflow-wrap: anywhere;
     }
     .bracket-school {
       font-size: 11px;
@@ -397,6 +465,15 @@ function selectWrestler(name) {
   displayAllResults(name, sortedResults);
 }
 
+function detailValue(value) {
+  return value === undefined || value === null || value === '' ? '&mdash;' : value;
+}
+
+function toggleDetailCard(id) {
+  const card = document.getElementById(id);
+  if (card) card.classList.toggle('expanded');
+}
+
 function displayAllResults(wrestlerName, allResults) {
   let html = '';
   
@@ -431,11 +508,25 @@ function displayAllResults(wrestlerName, allResults) {
       else if (w.Place === 2) badgeClass = 'second';
       else if (w.Place === 3) badgeClass = 'third';
       
+      const detailId = bracketId + '-detail-' + idx + '-' + w.Place;
       html += '<div class="bracket-card ' + (isHighlighted ? 'highlighted' : '') + '">' +
         '<div class="bracket-place-badge ' + badgeClass + '">' + w.Place + '</div>' +
         '<div class="bracket-name" onclick="selectWrestler(\'' + w.Wrestler.replace(/'/g, "\\'") + '\')">' + w.Wrestler + '</div>' +
         '<div class="bracket-school">' + w.School + '</div>' +
-        '</div>';
+        '<button class="info-btn" aria-label="Show details for ' + w.Wrestler.replace(/"/g, '&quot;') + '" onclick="toggleDetailCard(\'' + detailId + '\')">i</button>' +
+        '</div>' +
+        '<div class="detail-card" id="' + detailId + '">' +
+        '<div class="detail-card-header"><span>' + w.Wrestler + '</span><button class="detail-close" onclick="toggleDetailCard(\'' + detailId + '\')">Close</button></div>' +
+        '<div class="detail-grid">' +
+        '<div><span>Year</span><strong>' + detailValue(w.Year) + '</strong></div>' +
+        '<div><span>Class</span><strong>' + detailValue(w.Class) + '</strong></div>' +
+        '<div><span>Weight</span><strong>' + detailValue(w.Weight) + '</strong></div>' +
+        '<div><span>School</span><strong>' + detailValue(w.School) + '</strong></div>' +
+        '<div><span>Town</span><strong>' + detailValue(w.Town) + '</strong></div>' +
+        '<div><span>Yr</span><strong>' + detailValue(w.Grad) + '</strong></div>' +
+        '<div><span>Type</span><strong>' + detailValue(w.SchoolType) + '</strong></div>' +
+        '<div><span>Record</span><strong>' + detailValue(w.Record) + '</strong></div>' +
+        '</div></div>';
     });
     
     html += '</div></div>';
@@ -482,7 +573,7 @@ document.addEventListener('click', (e) => {
 </script>
 
   <div style="text-align:center; padding: 24px 16px 32px; color: #999; font-size: 13px;">
-    v2.4 &nbsp;&middot;&nbsp;
+    v2.5 &nbsp;&middot;&nbsp;
     <a href="mailto:matt_petersen@hotmail.com?subject=IHSA Wrestling Results Feedback" style="color:#0078d4; text-decoration:none;">Send Feedback</a>
     &nbsp;&middot;&nbsp;
     <a href="https://www.wrestlingroad.com" style="color:#0078d4; text-decoration:none;">Full Site</a>
