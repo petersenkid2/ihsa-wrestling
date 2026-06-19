@@ -251,16 +251,18 @@ mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;pad
 </div>
 <script src="data-config.js?v=1"></script>
 <script>
-  document.write('<script src="' + (window.DATA_FILE || 'data-full.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
+  document.write('<script src="' + (window.DATA_FILE || 'Good-data.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
 </script>
 <script>
 const DATA = WRESTLER_DATA;
 const DATA_MODE = window.DATA_MODE === 'TEST' ? 'TEST' : 'FULL';
-const dataModeBadge = document.getElementById('dataModeBadge');
-if (dataModeBadge) {
-  dataModeBadge.textContent = 'Data: ' + DATA_MODE;
-  dataModeBadge.classList.toggle('test', DATA_MODE === 'TEST');
-}
+window.addEventListener('load', () => {
+  const dataModeBadge = document.getElementById('dataModeBadge');
+  if (dataModeBadge) {
+    dataModeBadge.textContent = 'Data: ' + DATA_MODE;
+    dataModeBadge.classList.toggle('test', DATA_MODE === 'TEST');
+  }
+});
 const ALL_WEIGHTS=[...new Set(DATA.map(r=>r.Weight).filter(w=>w!==''))].sort((a,b)=>{if(a==='HWT')return 1;if(b==='HWT')return -1;return a-b;});
 const state={search:'',yearMin:1937,yearMax:2026,class:new Set(),weight:new Set(),place:new Set(),schooltype:new Set(),grad:new Set(),sortCol:'Year',sortDir:-1,page:1,perPage:50};
 

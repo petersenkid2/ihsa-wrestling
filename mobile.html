@@ -435,16 +435,18 @@
 
 <script src="data-config.js?v=1"></script>
 <script>
-  document.write('<script src="' + (window.DATA_FILE || 'data-full.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
+  document.write('<script src="' + (window.DATA_FILE || 'Good-data.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
 </script>
 <script>
 const DATA = WRESTLER_DATA;
 const DATA_MODE = window.DATA_MODE === 'TEST' ? 'TEST' : 'FULL';
-const footerMode = document.getElementById('dataModeBadge');
-if (footerMode) {
-  footerMode.textContent = 'Data: ' + DATA_MODE;
-  footerMode.classList.toggle('test', DATA_MODE === 'TEST');
-}
+window.addEventListener('load', () => {
+  const footerMode = document.getElementById('dataModeBadge');
+  if (footerMode) {
+    footerMode.textContent = 'Data: ' + DATA_MODE;
+    footerMode.classList.toggle('test', DATA_MODE === 'TEST');
+  }
+});
 
 const searchInput = document.getElementById('searchInput');
 const autocompleteList = document.getElementById('autocompleteList');
