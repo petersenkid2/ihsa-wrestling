@@ -140,7 +140,10 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 .data-banner.visible{display:flex}
 .data-banner-icon{font-size:15px;flex-shrink:0}
 .data-banner a{color:var(--cp-link);text-decoration:underline}
-.site-footer{padding:10px 16px;border-top:1px solid var(--cp-border);font-size:12px;color:var(--cp-text-muted);display:flex;justify-content:space-between;align-items:center;background:var(--cp-surface)}
+.site-footer{padding:10px 16px;border-top:1px solid var(--cp-border);font-size:12px;color:var(--cp-text-muted);display:flex;justify-content:space-between;align-items:center;background:var(--cp-surface);gap:12px}
+.footer-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.data-mode-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;border:1px solid #166534;background:rgba(22,163,74,.12);color:#166534;font-size:11px;font-weight:600;letter-spacing:.02em}
+.data-mode-badge.test{border-color:#b45309;background:rgba(245,158,11,.14);color:#b45309}
 .feedback-link{color:var(--cp-link);text-decoration:none;font-size:12px}
 .feedback-link:hover{text-decoration:underline}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
@@ -246,9 +249,18 @@ mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;pad
     </div>
   </main>
 </div>
-<script src="data.js?v=3.1"></script>
+<script src="data-config.js?v=1"></script>
+<script>
+  document.write('<script src="' + (window.DATA_FILE || 'data-full.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
+</script>
 <script>
 const DATA = WRESTLER_DATA;
+const DATA_MODE = window.DATA_MODE === 'TEST' ? 'TEST' : 'FULL';
+const dataModeBadge = document.getElementById('dataModeBadge');
+if (dataModeBadge) {
+  dataModeBadge.textContent = 'Data: ' + DATA_MODE;
+  dataModeBadge.classList.toggle('test', DATA_MODE === 'TEST');
+}
 const ALL_WEIGHTS=[...new Set(DATA.map(r=>r.Weight).filter(w=>w!==''))].sort((a,b)=>{if(a==='HWT')return 1;if(b==='HWT')return -1;return a-b;});
 const state={search:'',yearMin:1937,yearMax:2026,class:new Set(),weight:new Set(),place:new Set(),schooltype:new Set(),grad:new Set(),sortCol:'Year',sortDir:-1,page:1,perPage:50};
 
@@ -589,7 +601,9 @@ buildWeightList();
 render();
 </script>
 <div class="site-footer">
-  <span>IHSA Wrestling Results 1937–2026</span><span style="margin-left:8px">v3.1</span>
+  <div class="footer-meta">
+    <span>IHSA Wrestling Results 1937–2026</span><span>v3.1</span><span class="data-mode-badge" id="dataModeBadge">Data: FULL</span>
+  </div>
   <a class="feedback-link" href="mailto:matt_petersen@hotmail.com?subject=IHSA%20Wrestling%20Feedback&body=Wrestler%3A%0AYear%3A%0AClass%3A%0AWeight%3A%0AIssue%3A">Feedback</a>
 </div>
 </body>

@@ -383,6 +383,24 @@
     .back-btn:active {
       background: #ddd;
     }
+    .footer-mode {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #166534;
+      background: rgba(22,163,74,.12);
+      color: #166534;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      margin-right: 6px;
+    }
+    .footer-mode.test {
+      border-color: #b45309;
+      background: rgba(245,158,11,.14);
+      color: #b45309;
+    }
   </style>
 </head>
 <body>
@@ -415,9 +433,18 @@
   </div>
 </div>
 
-<script src="data.js?v=3.1"></script>
+<script src="data-config.js?v=1"></script>
+<script>
+  document.write('<script src="' + (window.DATA_FILE || 'data-full.js') + '?v=' + encodeURIComponent(window.DATA_VERSION || '1') + '"><\/script>');
+</script>
 <script>
 const DATA = WRESTLER_DATA;
+const DATA_MODE = window.DATA_MODE === 'TEST' ? 'TEST' : 'FULL';
+const footerMode = document.getElementById('dataModeBadge');
+if (footerMode) {
+  footerMode.textContent = 'Data: ' + DATA_MODE;
+  footerMode.classList.toggle('test', DATA_MODE === 'TEST');
+}
 
 const searchInput = document.getElementById('searchInput');
 const autocompleteList = document.getElementById('autocompleteList');
@@ -581,6 +608,7 @@ document.addEventListener('click', (e) => {
 </script>
 
   <div style="text-align:center; padding: 24px 16px 32px; color: #999; font-size: 13px;">
+    <span class="footer-mode" id="dataModeBadge">Data: FULL</span>
     v3.1 &nbsp;&middot;&nbsp;
     <a href="mailto:matt_petersen@hotmail.com?subject=IHSA Wrestling Results Feedback" style="color:#0078d4; text-decoration:none;">Send Feedback</a>
     &nbsp;&middot;&nbsp;
