@@ -148,6 +148,38 @@ td{padding:8px 12px;color:var(--cp-text);white-space:nowrap}
 .feedback-link:hover{text-decoration:underline}
 mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;padding:0 1px}
 @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{min-height:auto;border-right:none;border-bottom:1px solid var(--cp-border)}}
+
+/* === Impeccable polish === */
+/* Header: visual identity — crimson top accent, bolder title */
+.header{border-top:3px solid var(--cp-accent)}
+.header-title h1{font-size:1.5rem;font-weight:800;letter-spacing:-.025em}
+.header-title .subtitle{font-size:.78rem;font-style:italic;opacity:.75}
+
+/* Stats hierarchy: primary stat (Results) dominates */
+.stats-bar .stat:first-child .stat-val{font-size:1.65rem}
+.stats-bar .stat:first-child .stat-lbl{font-weight:700;color:var(--cp-accent)}
+
+/* Champion rows: subtle gold ambient glow */
+tbody tr.champ-row{background:rgba(255,215,0,0.05)}
+tbody tr.champ-row:hover{background:rgba(255,215,0,0.09)}
+tbody tr.champ-row td:first-child{box-shadow:inset 3px 0 0 #FFD700}
+
+/* Dual-handle year range slider */
+.year-slider-wrap{position:relative;height:34px;display:flex;align-items:center;margin-top:6px}
+.year-track{position:absolute;left:0;right:0;height:4px;background:var(--cp-border);border-radius:2px;pointer-events:none}
+.year-fill{position:absolute;height:4px;background:var(--cp-accent);border-radius:2px;pointer-events:none}
+.year-thumb{position:absolute;width:100%;height:4px;background:none;pointer-events:none;-webkit-appearance:none;appearance:none;outline:none;margin:0}
+.year-thumb::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--cp-accent);border:2.5px solid var(--cp-surface);box-shadow:0 1px 6px rgba(0,0,0,.25);cursor:grab;pointer-events:all;transition:transform .1s}
+.year-thumb::-webkit-slider-thumb:hover{transform:scale(1.2)}
+.year-thumb::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--cp-accent);border:2.5px solid var(--cp-surface);box-shadow:0 1px 6px rgba(0,0,0,.25);cursor:grab;pointer-events:all}
+.year-range-label{font-weight:700;color:var(--cp-accent);font-size:11px;text-transform:none;letter-spacing:0}
+
+/* Sidebar: section rhythm via dividers */
+.slicer-section{padding-bottom:16px}
+.slicer-section+.slicer-section{border-top:1px solid var(--cp-border);padding-top:14px}
+
+/* Table: wrestler name slightly larger to anchor the row */
+td[style*="font-weight:600"]{font-size:13.5px}
 </style>
     <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -172,11 +204,11 @@ mark{background:var(--cp-highlight);color:var(--cp-accent);border-radius:2px;pad
 <div class="layout">
   <aside class="sidebar">
     <div class="slicer-section">
-      <div class="slicer-label">Year Range</div>
-      <div class="year-inputs">
-        <input type="number" id="yearMin" value="2026" min="1937" max="2026">
-        <span class="year-dash">–</span>
-        <input type="number" id="yearMax" value="2026" min="1937" max="2026">
+      <div class="slicer-label">Year Range <span id="yearRangeDisplay" class="year-range-label">1937 – 2026</span></div>
+      <div class="year-slider-wrap">
+        <div class="year-track"><div class="year-fill" id="yearFill"></div></div>
+        <input type="range" id="yearMin" class="year-thumb" min="1937" max="2026" value="1937">
+        <input type="range" id="yearMax" class="year-thumb" min="1937" max="2026" value="2026">
       </div>
     </div>
     <div class="slicer-section">
@@ -360,8 +392,8 @@ function render(){
     tbody.innerHTML=`<tr><td colspan="${COLS.length}" class="empty">No results match your filters.</td></tr>`;
   }else{
     tbody.innerHTML=pageData.map(r=>`
-      <tr>
-        <td><button class="bracket-btn" title="Filter to this bracket" data-year="${r.Year}" data-class="${r.Class}" data-weight="${r.Weight}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <tr class="${r.Place===1?'champ-row':''}">
+        <td><button class="bracket-btn"title="Filter to this bracket" data-year="${r.Year}" data-class="${r.Class}" data-weight="${r.Weight}"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
   <line x1="2" y1="3" x2="2" y2="6"/>
   <line x1="2" y1="4.5" x2="6" y2="4.5"/>
   <line x1="2" y1="8" x2="2" y2="11"/>
@@ -408,8 +440,22 @@ function resetPage(){state.page=1;}
 
 let searchTimer;
 document.getElementById('searchInput').addEventListener('input',e=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{state.search=e.target.value;resetPage();render();},200);});
-document.getElementById('yearMin').addEventListener('change',e=>{state.yearMin=Math.max(1937,Math.min(Number(e.target.value)||1937,state.yearMax));e.target.value=state.yearMin;resetPage();render();});
-document.getElementById('yearMax').addEventListener('change',e=>{state.yearMax=Math.min(2026,Math.max(Number(e.target.value)||2026,state.yearMin));e.target.value=state.yearMax;resetPage();render();});
+function updateYearSlider(){
+  const pMin=(state.yearMin-1937)/89*100;
+  const pMax=(state.yearMax-1937)/89*100;
+  const fill=document.getElementById('yearFill');
+  if(fill){fill.style.left=pMin+'%';fill.style.width=(pMax-pMin)+'%';}
+  const disp=document.getElementById('yearRangeDisplay');
+  if(disp)disp.textContent=state.yearMin===state.yearMax?String(state.yearMin):state.yearMin+' – '+state.yearMax;
+}
+document.getElementById('yearMin').addEventListener('input',e=>{
+  const v=Math.min(Number(e.target.value),state.yearMax);
+  e.target.value=v;state.yearMin=v;updateYearSlider();resetPage();render();
+});
+document.getElementById('yearMax').addEventListener('input',e=>{
+  const v=Math.max(Number(e.target.value),state.yearMin);
+  e.target.value=v;state.yearMax=v;updateYearSlider();resetPage();render();
+});
 document.querySelectorAll('.pill').forEach(p=>{
   p.addEventListener('click',()=>{const g=p.dataset.group,v=p.dataset.val;if(state[g].has(v))state[g].delete(v);else state[g].add(v);p.classList.toggle('active',state[g].has(v));resetPage();render();});
 });
@@ -430,6 +476,7 @@ document.getElementById('resetAll').addEventListener('click',()=>{
   document.getElementById('searchInput').value='';
   document.getElementById('yearMin').value=1937;
   document.getElementById('yearMax').value=2026;
+  updateYearSlider();
   document.getElementById('weightList').querySelectorAll('input').forEach(cb=>cb.checked=true);
   state.weight.clear();state.sortCol='Year';state.sortDir=-1;
   resetPage();render();
@@ -476,6 +523,7 @@ function restoreState(snap) {
   // Sync year inputs
   document.getElementById('yearMin').value = state.yearMin;
   document.getElementById('yearMax').value = state.yearMax;
+  updateYearSlider();
 
   // Sync pills
   document.querySelectorAll('.pill').forEach(p => {
@@ -506,6 +554,7 @@ function filterToSchool(school) {
   state.yearMax = 2026;
   document.getElementById('yearMin').value = 1937;
   document.getElementById('yearMax').value = 2026;
+  updateYearSlider();
 
   state.class.clear();
   state.place.clear();
@@ -532,6 +581,7 @@ function filterToWrestler(name) {
   state.yearMax = 2026;
   document.getElementById('yearMin').value = 1937;
   document.getElementById('yearMax').value = 2026;
+  updateYearSlider();
 
   state.class.clear();
   state.place.clear();
@@ -564,6 +614,7 @@ function filterToBracket(year, cls, weight) {
   state.yearMax = year;
   document.getElementById('yearMin').value = year;
   document.getElementById('yearMax').value = year;
+  updateYearSlider();
 
   // Class: select only this class
   state.class.clear();
@@ -600,11 +651,12 @@ document.getElementById('tableBody').addEventListener('click', e => {
 });
 
 buildWeightList();
+updateYearSlider();
 render();
 </script>
 <div class="site-footer">
   <div class="footer-meta">
-    <span>IHSA Wrestling Results 1937–2026</span><span>v3.1</span><span class="data-mode-badge" id="dataModeBadge">Data: FULL</span>
+    <span>IHSA Wrestling Results 1937–2026</span><span>v3.2</span><span class="data-mode-badge" id="dataModeBadge">Data: FULL</span>
   </div>
   <a class="feedback-link" href="mailto:matt_petersen@hotmail.com?subject=IHSA%20Wrestling%20Feedback&body=Wrestler%3A%0AYear%3A%0AClass%3A%0AWeight%3A%0AIssue%3A">Feedback</a>
 </div>
